@@ -35,9 +35,9 @@ var map;
 try {
     map = new mapboxgl.Map({
         container: 'map',
-        center: [0, 0],
-        zoom: 0.5,
-        pitch: 0,
+        center: [-122.705872, 38.410349],
+        zoom: 11.0,
+        pitch: 60,
         style: form.styleSelect.value
     });
     map.addControl(new mapboxgl.NavigationControl({
