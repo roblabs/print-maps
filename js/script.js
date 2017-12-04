@@ -82,6 +82,12 @@ try {
         position: 'top-left'
     }));
 
+    map.addControl(new mapboxgl.ScaleControl({
+      maxWidth: 80,
+      unit: 'imperial'
+    }));
+
+
     // setup initial values for UI
     follow();
 } catch (e) {
@@ -425,19 +431,29 @@ function createPrintMap(width, height, dpi, format, unit, zoom, center,
                 saveAs(blob, 'map.png');
             });
         } else {
+            var long = 279.4;  // mm
+            var short = 215.9; // mm
+            var attribPositionFromCorner = 5; // mm
+            var orientation = width > height ? 'l' : 'p';
+            var pagePhysicalWidth  = width > height ? long : short;
+            var pagePhysicalHeight = width > height ? short: long;
+
             var pdf = new jsPDF({
-                orientation: width > height ? 'l' : 'p',
-                unit: unit,
-                format: [width, height],
-                compress: true
+                orientation: orientation,
+                format: 'letter'
             });
 
-            pdf.addImage(renderMap.getCanvas().toDataURL('image/png'),
-                'png', 0, 0, width, height, null, 'FAST');
+            var dataurl = renderMap.getCanvas().toDataURL('image/png');
+            pdf.addImage(dataurl, 'png', 0, 0, pagePhysicalWidth, pagePhysicalHeight);
+
+            pdf.setFontSize(6);
+            var attrib = window.document.getElementsByClassName("mapboxgl-ctrl-attrib")[0];
+
+            pdf.text(attribPositionFromCorner, pagePhysicalHeight - attribPositionFromCorner, attrib.innerText);
 
             var title = map.getStyle().name;
             var author = "";
-            var creator = "";
+            var creator = "RobLabs.com/print";
             var subject = "center: [" + form.longitudeInput.value  + ", " + form.latitudeInput.value + ", " + form.zoomInput.value + "]";
 
             pdf.setProperties({
