@@ -33,9 +33,9 @@ var mapValues = {
 
 
 var Styles = Object.freeze({
-  "Positron": 1,
-  "DarkMatter": 2,
-  "OSMBright": 3,
+  "KlokantechPositron": 1,
+  "KlokantechDarkMatter": 2,
+  "KlokantechOSMBright": 3,
   "KlokantechBasic": 4,
   "KlokantechTerrain": 5,
   "KlokantechFiordColor": 6,
@@ -48,6 +48,7 @@ var Styles = Object.freeze({
   "MapboxOutdoors": 13,
   "MapboxEmerald": 14,
   "epiMaps": 15,
+  "unknown": 999
 })
 
 
@@ -64,15 +65,15 @@ function styleSelected(){
   console.log($('#styleSelect option:selected').text());
 
   switch (selectedValue) {
-    case Styles.Positron:
+    case Styles.KlokantechPositron:
       mapValues.style = "https://openmaptiles.github.io/positron-gl-style/style-cdn.json";
     break;
 
-    case Styles.DarkMatter:
+    case Styles.KlokantechDarkMatter:
       mapValues.style = "https://openmaptiles.github.io/dark-matter-gl-style/style-cdn.json";
     break;
 
-    case Styles.OSMBright:
+    case Styles.KlokantechOSMBright:
       mapValues.style = "https://openmaptiles.github.io/osm-bright-gl-style/style-cdn.json";
     break;
 
@@ -516,7 +517,7 @@ function createPrintMap(width, height, dpi, format, unit, zoom, center,
 
     renderMap.once('load', function() {
         if (format == 'png') {
-            renderMap.getCanvas().toBlob(function(blob) {
+          renderMap.getCanvas().toBlob(function(blob) {
                 saveAs(blob, 'map.png');
             });
         } else {
@@ -530,7 +531,7 @@ function createPrintMap(width, height, dpi, format, unit, zoom, center,
             var pdf = new jsPDF({
                 orientation: orientation,
                 format: 'letter'
-            });
+              });
 
             var dataurl = renderMap.getCanvas().toDataURL('image/png');
             pdf.addImage(dataurl, 'png', 0, 0, pagePhysicalWidth, pagePhysicalHeight);
