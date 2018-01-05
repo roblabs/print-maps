@@ -21,36 +21,108 @@
  * THE SOFTWARE.
  */
 
- (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
- var Canvas = require('canvas-browserify')
-
-
- // browserify canvas-browserify.node > js/canvas.js
-
- },{"canvas-browserify":2}],2:[function(require,module,exports){
-
- var Canvas = module.exports = function Canvas (w, h) {
-   var canvas = document.createElement('canvas')
-   canvas.width = w || 300
-   canvas.height = h || 150
-   return canvas
- }
-
- Canvas.Image = function () {
-   var img = document.createElement('img')
-   return img
- }
-
-
-
-
- },{}]},{},[1]);
-
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm9ibGFicyIsImEiOiJjamFsZDl4ZXgycjljMzFucTI3cXBhOGluIn0.nDnS_YSbkFLICDf6qmvJGA';
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm9ibGFicyIsImEiOiJwVlg0cnZnIn0.yhekddtKwZohGoORaWjqIw';
 
 var form = document.getElementById('config');
 
+var mapValues = {
+  center: [0, 0],
+  zoom: 0.5,
+  style: "mapbox://styles/mapbox/streets-v10"
+}
 
+
+var Styles = Object.freeze({
+  "Positron": 1,
+  "DarkMatter": 2,
+  "OSMBright": 3,
+  "KlokantechBasic": 4,
+  "KlokantechTerrain": 5,
+  "KlokantechFiordColor": 6,
+  "KlokantechToner": 7,
+  "KlokantechRomanEmpire": 8,
+  "OSMLiberty": 9,
+  "MapboxLight": 10,
+  "MapboxDark": 11,
+  "MapboxStreets": 12,
+  "MapboxOutdoors": 13,
+  "MapboxEmerald": 14
+})
+
+
+$(document).ready(function () {
+
+    $('#styleSelect').change(styleSelected)
+    styleSelected();
+});
+
+
+function styleSelected(){
+  var selectedValue = parseInt( $('#styleSelect option:selected').val() )
+  console.log(selectedValue)
+  console.log($('#styleSelect option:selected').text());
+
+  switch (selectedValue) {
+    case Styles.Positron:
+      mapValues.style = "https://openmaptiles.github.io/positron-gl-style/style-cdn.json";
+    break;
+
+    case Styles.DarkMatter:
+      mapValues.style = "https://openmaptiles.github.io/dark-matter-gl-style/style-cdn.json";
+    break;
+
+    case Styles.OSMBright:
+      mapValues.style = "https://openmaptiles.github.io/osm-bright-gl-style/style-cdn.json";
+    break;
+
+    case Styles.KlokantechBasic:
+      mapValues.style = "https://openmaptiles.github.io/klokantech-basic-gl-style/style-cdn.json";
+    break;
+
+    case Styles.KlokantechTerrain:
+      mapValues.style = "https://openmaptiles.github.io/klokantech-terrain-gl-style/style-cdn.json";
+    break;
+
+    case Styles.KlokantechFiordColor:
+      mapValues.style = "https://openmaptiles.github.io/fiord-color-gl-style/style-cdn.json";
+    break;
+
+    case Styles.KlokantechToner:
+      mapValues.style = "https://openmaptiles.github.io/toner-gl-style/style-cdn.json";
+    break;
+
+    case Styles.KlokantechRomanEmpire:
+      mapValues.style = "https://klokantech.github.io/roman-empire/style.json";
+      mapValues.zoom = 4;
+      mapValues.center = [11.9301, 41.9580];
+    break;
+
+    case Styles.OSMLiberty:
+      mapValues.style = "http://osm-liberty.lukasmartinelli.ch/style.json";
+    break;
+
+    case Styles.MapboxLight:
+      mapValues.style = "mapbox://styles/mapbox/light-v9";
+    break;
+
+    case Styles.MapboxDark:
+      mapValues.style = "mapbox://styles/mapbox/dark-v9";
+    break;
+
+    case Styles.MapboxStreets:
+      mapValues.style = "mapbox://styles/mapbox/streets-v10";
+    break;
+
+    case Styles.MapboxOutdoors:
+      mapValues.style = "mapbox://styles/mapbox/outdoors-v10";
+    break;
+
+  }
+
+  map.setStyle(mapValues.style);
+  map.setCenter(mapValues.center);
+  map.setZoom(mapValues.zoom);
+}
 
 //
 // Interactive map
@@ -157,7 +229,7 @@ function handleErrors() {
             }
             document.getElementById(e.grp).classList.add('has-error');
         } else {
-            document.getElementById(e.grp).classList.remove('has-error');
+            // TODO - document.getElementById(e.grp).classList.remove('has-error');
         }
     }
     if (anError) {
@@ -274,7 +346,11 @@ form.zoomInput.addEventListener('change', function(e) {
 form.styleSelect.addEventListener('change', function() {
     'use strict';
     try {
-    map.setStyle(form.styleSelect.value);
+      map.setStyle(mapValues.style);
+
+      // // TODO you can only make this call after the map is done being set.  find an event handler
+      //
+      // console.log(map.getStyle().name);
     } catch (e) {
         openErrorModal("print-maps error - " + e.message);
     }
@@ -384,7 +460,7 @@ function generateMap() {
 
     var unit = form.unitOptions[0].checked ? 'in' : 'mm';
 
-    var style = form.styleSelect.value;
+    var style = mapValues.style;
 
     var zoom = map.getZoom();
     var center = map.getCenter();
@@ -425,6 +501,12 @@ function createPrintMap(width, height, dpi, format, unit, zoom, center,
         interactive: false,
         attributionControl: false
     });
+
+    renderMap.addControl(new mapboxgl.ScaleControl({
+      maxWidth: 80,
+      unit: 'imperial'
+    }));
+
     renderMap.once('load', function() {
         if (format == 'png') {
             renderMap.getCanvas().toBlob(function(blob) {
