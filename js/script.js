@@ -46,7 +46,8 @@ var Styles = Object.freeze({
   "MapboxDark": 11,
   "MapboxStreets": 12,
   "MapboxOutdoors": 13,
-  "MapboxEmerald": 14
+  "MapboxEmerald": 14,
+  "epiMaps": 15,
 })
 
 
@@ -115,6 +116,12 @@ function styleSelected(){
 
     case Styles.MapboxOutdoors:
       mapValues.style = "mapbox://styles/mapbox/outdoors-v10";
+    break;
+
+    case Styles.epiMaps:
+      mapValues.style = "http://52.11.239.98:8081/styles/epi/style.json";
+      mapValues.zoom = 11;
+      mapValues.center = [-116.4433, 32.8790];
     break;
 
   }
